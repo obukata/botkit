@@ -28,6 +28,10 @@ controller.hears(["波動拳"],["direct_message","direct_mention","mention"],fun
   bot.reply(message, '昇竜拳！');
 });
 
+controller.hears(["アレックス フレーム表"],["direct_message","direct_mention","mention"],function(bot,message) {
+  bot.reply(message, 'https://docs.google.com/spreadsheets/d/1e8Ott5IfoyXaOcaGQfEW4gxbylA89mF9SB2An2M3gFY/edit#gid=1371017080');
+});
+
 //=========================================================
 // 基本的な受け答え
 //=========================================================
