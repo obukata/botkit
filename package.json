@@ -1,0 +1,19 @@
+{
+  "name": "botkit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "bot.js",
+  "dependencies": {
+    "botkit": "^0.5.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.heroku.com/kicktick.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
