@@ -14,6 +14,7 @@ if (!process.env.token) {
 
 var Botkit = require('botkit');
 var os = require('os');
+var cron = require('cron');
 
 var controller = Botkit.slackbot({
 	debug: true,
@@ -21,8 +22,23 @@ var controller = Botkit.slackbot({
 
 var bot = controller.spawn({
 	token: process.env.token
-}).startRTM();
+}).startRTM((err, bot, payload) => {
+	new cron.CronJob({
+		cronTime: '00 * * * * *', // 秒、分、時間、日、月、週です。
+		onTick: () => {
+			bot.say({
+				channel: 'dev_botkit',
+				text: '俺より強い奴に会いに行く！'
+			});
+		},
+		start: true,
+		timeZone: 'Asia/Tokyo'
+	});
+});
 
+//=========================================================
+// リュウさんなんとなくお喋る
+//=========================================================
 
 controller.hears(["波動拳"],["direct_message","direct_mention","mention"],function(bot,message) {
   bot.reply(message, '昇竜拳！');
@@ -41,53 +57,53 @@ controller.hears(["アレックス フレーム表"],["direct_message","direct_m
 // Botの準備
 //=========================================================
 
-const http = require('http');
-http.get("http://api.openweathermap.org/data/2.5/weather?id=1850147&units=metric&appid=[addd6c5c7f4fcbfcefb9693c77b10eb6]", (response) => {
-	let buffer = '';
-	response.setEncoding('utf8').on('data', (chunk) => {  buffer += chunk;  });
-	response.on('end', () => {
-		let current = JSON.parse(buffer);
-		console.log(current)
-	});
-});
+// const http = require('http');
+// http.get("http://api.openweathermap.org/data/2.5/weather?id=1850147&units=metric&appid=[addd6c5c7f4fcbfcefb9693c77b10eb6]", (response) => {
+// 	let buffer = '';
+// 	response.setEncoding('utf8').on('data', (chunk) => {  buffer += chunk;  });
+// 	response.on('end', () => {
+// 		let current = JSON.parse(buffer);
+// 		console.log(current)
+// 	});
+// });
 
-'use strict';
-const Botkit = require('botkit');
-const http = require('http');
-const cron = require('cron');
-const moment = require('moment-timezone');
-const controller = Botkit.slackbot();
-controller.spawn({
-    token: process.env.bot_access_token
-}).startRTM((err, bot, payload) => {
-    moment.locale('ja');
-    moment.tz.setDefault('Asia/Tokyo');
-    const city = '1853908';       // Tokyo
-    const channel = 'dev_botkit';    // #sandbox
-    const apikey = '[addd6c5c7f4fcbfcefb9693c77b10eb6]';   // Please replace with your API_KEY
-    new cron.CronJob({
-        cronTime: '00 00 22 30 * *',
-        onTick: () => {
-            http.get(`http://api.openweathermap.org/data/2.5/weather?id=${city}&units=metric&appid=${apikey}`, (response) => {
-                let body = '';
-                response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
-                response.on('end', () => {
-                    let current = JSON.parse(body);
-                    let text =
-                            `${moment.unix(current.dt).format('H:mm')} 現在 ${current.name} の 天気` +
-                            `<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
-                            `${current.weather[0].main}(${current.weather[0].description}) / ` +
-                            `気温 ${Math.round(current.main.temp)} ℃ ` +
-                            `${current.rain && current.rain['3h'] ? '/ 降雨量 ' + Math.ceil(current.rain['3h'] * 10) / 10 + ' mm ' : '' }` +
-                            `${current.snow && current.snow['3h'] ? '/ 降雪量 ' + Math.ceil(current.snow['3h'] * 10) / 10 + ' mm ' : '' }`;
-                    bot.say({  text: text,  channel: channel  });
-                });
-            });
-        },
-        start: true,
-        timeZone: 'Asia/Tokyo'
-    });
-});
+// 'use strict';
+// const Botkit = require('botkit');
+// const http = require('http');
+// const cron = require('cron');
+// const moment = require('moment-timezone');
+// const controller = Botkit.slackbot();
+// controller.spawn({
+//     token: process.env.bot_access_token
+// }).startRTM((err, bot, payload) => {
+//     moment.locale('ja');
+//     moment.tz.setDefault('Asia/Tokyo');
+//     const city = '1853908';       // Osaka
+//     const channel = 'dev_botkit';    // #dev_botkit
+//     const apikey = '[addd6c5c7f4fcbfcefb9693c77b10eb6]';   // Please replace with your API_KEY
+//     new cron.CronJob({
+//         cronTime: '00 00 22 30 * *',
+//         onTick: () => {
+//             http.get(`http://api.openweathermap.org/data/2.5/weather?id=${city}&units=metric&appid=${apikey}`, (response) => {
+//                 let body = '';
+//                 response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+//                 response.on('end', () => {
+//                     let current = JSON.parse(body);
+//                     let text =
+//                             `${moment.unix(current.dt).format('H:mm')} 現在 ${current.name} の 天気` +
+//                             `<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+//                             `${current.weather[0].main}(${current.weather[0].description}) / ` +
+//                             `気温 ${Math.round(current.main.temp)} ℃ ` +
+//                             `${current.rain && current.rain['3h'] ? '/ 降雨量 ' + Math.ceil(current.rain['3h'] * 10) / 10 + ' mm ' : '' }` +
+//                             `${current.snow && current.snow['3h'] ? '/ 降雪量 ' + Math.ceil(current.snow['3h'] * 10) / 10 + ' mm ' : '' }`;
+//                     bot.say({  text: text,  channel: channel  });
+//                 });
+//             });
+//         },
+//         start: true,
+//         timeZone: 'Asia/Tokyo'
+//     });
+// });
 
 //=========================================================
 // 基本的な受け答え
