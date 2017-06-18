@@ -22,19 +22,7 @@ var controller = Botkit.slackbot({
 
 var bot = controller.spawn({
 	token: process.env.token
-}).startRTM((err, bot, payload) => {
-	new cron.CronJob({
-		cronTime: '00 * * * * *', // 秒、分、時間、日、月、週です。
-		onTick: () => {
-			bot.say({
-				channel: 'dev_botkit',
-				text: '俺より強い奴に会いに行く！'
-			});
-		},
-		start: true,
-		timeZone: 'Asia/Tokyo'
-	});
-});
+}).startRTM(});
 
 //=========================================================
 // リュウさんなんとなくお喋る
