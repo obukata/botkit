@@ -6,6 +6,7 @@
 //=========================================================
 // Botの準備
 //=========================================================
+'use strict';
 
 if (!process.env.token) {
 	console.log('Error: Specify token in environment');
@@ -14,26 +15,100 @@ if (!process.env.token) {
 
 var Botkit = require('botkit');
 var os = require('os');
+var CronJob = require('cron').CronJob;
+const http = require('http');
+const moment = require('moment-timezone');
 
 var controller = Botkit.slackbot({
 	debug: true,
 });
 
+//=========================================================
+// 起こしてくれるよ
+//=========================================================
+
 var bot = controller.spawn({
 	token: process.env.token
-}).startRTM();
+}).startRTM(function(err, bot, payload) {
+	// 初期処理
+	if(err) {
+		throw new Error('Could not connect to Slack');
+	}
+	new CronJob({
+		cronTime: '00 30 06 * * 1-5',
+		onTick: function() {
+			bot.say({
+				channel: 'dev_botkit',
+				text: 'おい！起きろ！\n…元気がないようだな\n納豆はどうだ？健康にいいぞ'
+			});
+		},
+		start: true,
+		timeZone: 'Asia/Tokyo'
+	});
+});
 
+
+//=========================================================
+// 天気を教えてくれるよ
+//=========================================================
+
+// 大阪
+controller.hears(["大阪(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
+	http.get("http://api.openweathermap.org/data/2.5/weather?id=1853908&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+		let body = '';
+		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+		response.on('end', () => {
+			let current = JSON.parse(body);
+			let text =
+			`${moment.unix(current.dt).format('H:mm')} 今の ${current.name} の天気だ。` +
+			`<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+			`${current.weather[0].main}(${current.weather[0].description}) / ` +
+			`気温 ${Math.round(current.main.temp - 273.15)} ℃ ` +
+			`${current.rain && current.rain['3h'] ? '/ 降雨量 ' + Math.ceil(current.rain['3h'] * 10) / 10 + ' mm ' : '' }` +
+			`${current.snow && current.snow['3h'] ? '/ 降雪量 ' + Math.ceil(current.snow['3h'] * 10) / 10 + ' mm ' : '' }`;
+			bot.replyWithTyping(message, text);
+		});
+	});
+});
+
+// 牛久
+controller.hears(["牛久(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
+	http.get("http://api.openweathermap.org/data/2.5/weather?id=2110629&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+		let body = '';
+		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+		response.on('end', () => {
+			let current = JSON.parse(body);
+			let text =
+			`${moment.unix(current.dt).format('H:mm')} 今の ${current.name} の天気だ。` +
+			`<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+			`${current.weather[0].main}(${current.weather[0].description}) / ` +
+			`気温 ${Math.round(current.main.temp - 273.15)} ℃ ` +
+			`${current.rain && current.rain['3h'] ? '/ 降雨量 ' + Math.ceil(current.rain['3h'] * 10) / 10 + ' mm ' : '' }` +
+			`${current.snow && current.snow['3h'] ? '/ 降雪量 ' + Math.ceil(current.snow['3h'] * 10) / 10 + ' mm ' : '' }`;
+			bot.replyWithTyping(message, text);
+		});
+	});
+});
+
+
+//=========================================================
+// つーかー的なやつだよ
+//=========================================================
 
 controller.hears(["波動拳"],["direct_message","direct_mention","mention"],function(bot,message) {
-  bot.reply(message, '昇竜拳！');
+  bot.replyWithTyping(message, '昇竜拳！');
 });
 
 controller.hears(["昇竜拳"],["direct_message","direct_mention","mention"],function(bot,message) {
-  bot.reply(message, '竜巻旋風脚！');
+  bot.replyWithTyping(message, '竜巻旋風脚！');
 });
 
 controller.hears(["アレックス フレーム表"],["direct_message","direct_mention","mention"],function(bot,message) {
-  bot.reply(message, 'https://docs.google.com/spreadsheets/d/1e8Ott5IfoyXaOcaGQfEW4gxbylA89mF9SB2An2M3gFY/edit#gid=1371017080');
+  bot.replyWithTyping(message, 'https://docs.google.com/spreadsheets/d/1e8Ott5IfoyXaOcaGQfEW4gxbylA89mF9SB2An2M3gFY/edit#gid=1371017080');
+});
+
+controller.hears(['付き合って'], 'direct_message,direct_mention,mention,ambient',function(bot,message) {
+  bot.replyWithTyping(message, 'お前の楽しみと俺の楽しみは違うようだ。悪いが付き合ってはやれない。');
 });
 
 //=========================================================

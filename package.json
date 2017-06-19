@@ -4,7 +4,9 @@
   "description": "",
   "main": "bot.js",
   "dependencies": {
-    "botkit": "^0.5.4"
+    "botkit": "^0.5.4",
+    "cron": "^1.2.1",
+    "http": "0.0.0"
   },
   "devDependencies": {},
   "scripts": {
