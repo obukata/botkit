@@ -38,7 +38,7 @@ var bot = controller.spawn({
 		cronTime: '00 30 06 * * 1-5',
 		onTick: function() {
 			bot.say({
-				channel: 'dev_botkit',
+				channel: 'talk',
 				text: 'おい！起きろ！\n…元気がないようだな\n納豆はどうだ？健康にいいぞ'
 			});
 		},
@@ -53,8 +53,70 @@ var bot = controller.spawn({
 //=========================================================
 
 // 大阪
+new CronJob({
+	cronTime: '00 00 18 * * *',
+	onTick: function() {
+		http.get("http://api.openweathermap.org/data/2.5/forecast/daily?id=1853909&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+			let body = '';
+			response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+			response.on('end', () => {
+				let current = JSON.parse(body);
+				if(current.list[1].weather[0].main == "Rain") {
+					let text =
+					'明日の' + current.city.name + 'は、' + current.list[1].weather[0].main + 'だ。\n' +
+					`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+					'```' +
+					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + 'C\n' +
+					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + 'C\n' +
+					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + 'C\n' +
+					'湿度：' + current.list[1].humidity + '%\n' +
+					'```';
+					bot.say({
+						channel: 'talk',
+						text: text
+					});
+				}
+			});
+		});
+	},
+	start: true,
+	timeZone: 'Asia/Tokyo'
+});
+
+// 牛久
+new CronJob({
+	cronTime: '00 00 20 * * *',
+	onTick: function() {
+		http.get("http://api.openweathermap.org/data/2.5/forecast/daily?id=2110629&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+			let body = '';
+			response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+			response.on('end', () => {
+				let current = JSON.parse(body);
+				if(current.list[1].weather[0].main == "Rain") {
+					let text =
+					'明日の' + current.city.name + 'は、' + current.list[1].weather[0].main + 'だ。\n' +
+					`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+					'```' +
+					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + 'C\n' +
+					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + 'C\n' +
+					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + 'C\n' +
+					'湿度：' + current.list[1].humidity + '%\n' +
+					'```';
+					bot.say({
+						channel: 'talk',
+						text: text
+					});
+				}
+			});
+		});
+	},
+	start: true,
+	timeZone: 'Asia/Tokyo'
+});
+
+// 大阪
 controller.hears(["大阪(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
-	http.get("http://api.openweathermap.org/data/2.5/weather?id=1853908&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+	http.get("http://api.openweathermap.org/data/2.5/weather?id=1853909&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
 		let body = '';
 		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
 		response.on('end', () => {
@@ -63,7 +125,7 @@ controller.hears(["大阪(.*)天気"],["direct_message","direct_mention","mentio
 			`${moment.unix(current.dt).format('H:mm')} 今の ${current.name} の天気だ。` +
 			`<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
 			`${current.weather[0].main}(${current.weather[0].description}) / ` +
-			`気温 ${Math.round(current.main.temp - 273.15)} ℃ ` +
+			`気温 ${Math.round(current.main.temp - 273.15)} C ` +
 			`${current.rain && current.rain['3h'] ? '/ 降雨量 ' + Math.ceil(current.rain['3h'] * 10) / 10 + ' mm ' : '' }` +
 			`${current.snow && current.snow['3h'] ? '/ 降雪量 ' + Math.ceil(current.snow['3h'] * 10) / 10 + ' mm ' : '' }`;
 			bot.replyWithTyping(message, text);
@@ -82,7 +144,7 @@ controller.hears(["牛久(.*)天気"],["direct_message","direct_mention","mentio
 			`${moment.unix(current.dt).format('H:mm')} 今の ${current.name} の天気だ。` +
 			`<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
 			`${current.weather[0].main}(${current.weather[0].description}) / ` +
-			`気温 ${Math.round(current.main.temp - 273.15)} ℃ ` +
+			`気温 ${Math.round(current.main.temp - 273.15)} C ` +
 			`${current.rain && current.rain['3h'] ? '/ 降雨量 ' + Math.ceil(current.rain['3h'] * 10) / 10 + ' mm ' : '' }` +
 			`${current.snow && current.snow['3h'] ? '/ 降雪量 ' + Math.ceil(current.snow['3h'] * 10) / 10 + ' mm ' : '' }`;
 			bot.replyWithTyping(message, text);
