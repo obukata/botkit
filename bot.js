@@ -63,12 +63,12 @@ new CronJob({
 				let current = JSON.parse(body);
 				if(current.list[1].weather[0].main == "Rain") {
 					let text =
-					'明日の' + current.city.name + 'は、' + current.list[1].weather[0].main + 'だ。\n' +
+					'明日の大阪市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
 					`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
 					'```' +
-					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + 'C\n' +
-					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + 'C\n' +
-					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + 'C\n' +
+					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + '℃\n' +
+					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + '℃\n' +
+					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + '℃\n' +
 					'湿度：' + current.list[1].humidity + '%\n' +
 					'```';
 					bot.say({
@@ -94,12 +94,12 @@ new CronJob({
 				let current = JSON.parse(body);
 				if(current.list[1].weather[0].main == "Rain") {
 					let text =
-					'明日の' + current.city.name + 'は、' + current.list[1].weather[0].main + 'だ。\n' +
+					'明日の牛久市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
 					`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
 					'```' +
-					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + 'C\n' +
-					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + 'C\n' +
-					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + 'C\n' +
+					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + '℃\n' +
+					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + '℃\n' +
+					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + '℃\n' +
 					'湿度：' + current.list[1].humidity + '%\n' +
 					'```';
 					bot.say({
@@ -122,12 +122,14 @@ controller.hears(["大阪(.*)天気"],["direct_message","direct_mention","mentio
 		response.on('end', () => {
 			let current = JSON.parse(body);
 			let text =
-			`${moment.unix(current.dt).format('H:mm')} 今の ${current.name} の天気だ。` +
+			`今の大阪市は` + replaceWeather(current.weather[0].main) + `だ。` +
 			`<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
-			`${current.weather[0].main}(${current.weather[0].description}) / ` +
-			`気温 ${Math.round(current.main.temp - 273.15)} C ` +
-			`${current.rain && current.rain['3h'] ? '/ 降雨量 ' + Math.ceil(current.rain['3h'] * 10) / 10 + ' mm ' : '' }` +
-			`${current.snow && current.snow['3h'] ? '/ 降雪量 ' + Math.ceil(current.snow['3h'] * 10) / 10 + ' mm ' : '' }`;
+			'```' +
+			'平均気温：' + Math.round(current.main.temp - 273.15) + '℃\n' +
+			'最高気温：' + Math.round(current.main.temp_max - 273.15) + '℃\n' +
+			'最低気温：' + Math.round(current.main.temp_min - 273.15) + '℃\n' +
+			'湿度：' + current.main.humidity + '%\n' +
+			'```';
 			bot.replyWithTyping(message, text);
 		});
 	});
@@ -141,16 +143,33 @@ controller.hears(["牛久(.*)天気"],["direct_message","direct_mention","mentio
 		response.on('end', () => {
 			let current = JSON.parse(body);
 			let text =
-			`${moment.unix(current.dt).format('H:mm')} 今の ${current.name} の天気だ。` +
+			`今の牛久市は` + replaceWeather(current.weather[0].main) + `だ。` +
 			`<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
-			`${current.weather[0].main}(${current.weather[0].description}) / ` +
-			`気温 ${Math.round(current.main.temp - 273.15)} C ` +
-			`${current.rain && current.rain['3h'] ? '/ 降雨量 ' + Math.ceil(current.rain['3h'] * 10) / 10 + ' mm ' : '' }` +
-			`${current.snow && current.snow['3h'] ? '/ 降雪量 ' + Math.ceil(current.snow['3h'] * 10) / 10 + ' mm ' : '' }`;
+			'```' +
+			'平均気温：' + Math.round(current.main.temp - 273.15) + '℃\n' +
+			'最高気温：' + Math.round(current.main.temp_max - 273.15) + '℃\n' +
+			'最低気温：' + Math.round(current.main.temp_min - 273.15) + '℃\n' +
+			'湿度：' + current.main.humidity + '%\n' +
+			'```';
 			bot.replyWithTyping(message, text);
 		});
 	});
 });
+
+function replaceWeather(target) {
+	const replaced = target
+	.replace(/clear sky/, "快晴")
+	.replace(/few clouds/, "晴れ")
+	.replace(/scattered clouds/, "曇り")
+	.replace(/broken clouds/, "曇り")
+	.replace(/shower rain/, "小雨")
+	.replace(/Rain/, "雨")
+	.replace(/thunderstorm/, "雷雨")
+	.replace(/snow/, "雪")
+	.replace(/mist/, "霧")
+	console.log(replaced);
+	return replaced;
+}
 
 
 //=========================================================
