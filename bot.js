@@ -161,6 +161,7 @@ function replaceWeather(target) {
 	.replace(/clear sky/, "快晴")
 	.replace(/few clouds/, "晴れ")
 	.replace(/scattered clouds/, "曇り")
+	.replace(/Clouds/, "曇り")
 	.replace(/broken clouds/, "曇り")
 	.replace(/shower rain/, "小雨")
 	.replace(/Rain/, "雨")
