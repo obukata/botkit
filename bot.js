@@ -18,6 +18,7 @@ var os = require('os');
 var CronJob = require('cron').CronJob;
 const http = require('http');
 const moment = require('moment-timezone');
+const navigator = require('navigator');
 
 var controller = Botkit.slackbot({
 	debug: true,
@@ -47,6 +48,36 @@ var bot = controller.spawn({
 	});
 });
 
+//=========================================================
+// 地図系のなんとか
+//=========================================================
+
+// 現在実装諦め中
+
+// controller.hears(["地図"],["direct_message","direct_mention","mention"],function(bot,message) {
+// 	if(navigator.geolocation) {
+// 		bot.say({
+// 			channel: 'dev_botkit',
+// 			text: 'この端末は、現在位置を取得することが出来ます。'
+// 		});
+// 	}else {
+// 		bot.say({
+// 			channel: 'dev_botkit',
+// 			text: 'この端末は、現在位置を取得することが出来ません。'
+// 		});
+// 	};
+// });
+// service = new google.maps.place.PlacesService(map);
+// service.nearbySearch(request, callback);
+
+// http.get("https://maps.googleapis.com/maps/api/distancematrix/json?origins=", (response) => {
+// 	let body ="";
+// 	response.setEncoding('utf8').on('data', (chunk) => { body += chunk; });
+// 	response.on('end', () => {
+// 		let current = JSON.parse(body);
+// 		console.log(current);
+// 	});
+// };
 
 //=========================================================
 // 天気を教えてくれるよ
@@ -222,48 +253,32 @@ controller.hears(['付き合って'], 'direct_message,direct_mention,mention,amb
 // 質問形式の会話
 //=========================================================
 
-// controller.hears(['ラーメン'], 'direct_message,direct_mention,mention', function (bot, message) {
-
-//     bot.reply(message, ':ramen:いいですよね:grin:');
-
-//     // 会話を開始します。
-//     bot.startConversation(message, function (err, convo) {
-
-//         // convo.ask() で質問をします。
-//         convo.ask('おおお！私が何味が好きか当ててみてください！', [
-//             {
-//                 pattern: '醤油', // マッチさせる単語
-//                 callback: function (response, convo) {
-
-//                     // ▼ マッチした時の処理 ▼
-
-//                     convo.say('正解！:ok_woman:\n醤油！これぞ王道！:+1:'); // convo.say()で発言をします。
-//                     convo.next(); // convo.next()で、会話を次に進めます。通常は、会話が終了します。
-//                 }
-//             },
-//             {
-//                 pattern: '味噌',
-//                 callback: function (response, convo) {
-//                     convo.say('正解！:ok_woman:\n寒いと味噌たべたくなります！:+1:');
-//                     convo.next();
-//                 }
-//             },
-//             {
-//                 default: true,
-//                 callback: function (response, convo) {
-
-//                     // ▼ どのパターンにもマッチしない時の処理 ▼
-
-//                     convo.say('うーん、おしいです！:no_good:');
-//                     convo.repeat(); // convo.repeat()で、質問を繰り返します。
-//                     convo.next(); // 会話を次に進めます。この場合、最初の質問にも戻ります。
-//                 }
-//             }
-//         ]);
-
-//     })
-
-// });
+controller.hears(['ラーメン'], 'direct_message,direct_mention,mention,ambient', function (bot, message) {
+	// 会話を開始します。
+	bot.startConversation(message, function (err, convo) {
+		// convo.ask() で質問をします。
+		convo.ask('もしかして…食べたのか？', [{
+			pattern: '食べた',
+			callback: function (response, convo) {
+				convo.say('そうか');
+				// ▼ マッチした時の処理 ▼
+				// convo.ask('いくらしたんだ', [{
+				// 	var value_ramen = message.match[1];
+				// 	console.log(value_ramen);
+				// ]);
+				convo.next(); // convo.next()で、会話を次に進めます。通常は、会話が終了します。
+			}
+		},
+		{
+			default: true,
+			callback: function (response, convo) {
+				// ▼ どのパターンにもマッチしない時の処理 ▼
+				convo.say('なら、いい。');
+				convo.next(); // 会話を次に進めます。この場合、最初の質問にも戻ります。
+			}
+		}]);
+	})
+});
 
 
 
