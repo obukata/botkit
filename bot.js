@@ -21,10 +21,39 @@ const https = require('https');
 const moment = require('moment-timezone');
 const navigator = require('navigator');
 const url = require('url');
+const webshot = require('webshot');
+var im = require('imagemagick');
+const Gyazo = require('gyazo');
 
 var controller = Botkit.slackbot({
 	debug: true,
 });
+
+//=========================================================
+// スクリーンショット
+//=========================================================
+
+// const client = new Gyazo('ccc4d213d71472a268db1d4981f00f7de42c05c745ff33cab5be029517461128');
+
+
+// var options = {
+// 	phantomPath: 'screenshot'
+// }
+// controller.hears(["ショット"],["direct_message","direct_mention","mention"],function(bot,message) {
+// 	webshot('google.com', 'screenshot.png', options, function(err) {
+// 		client.upload('./screenshot.png', {
+// 			title: "my picture",
+// 			desc: "upload from nodejs"
+// 		})
+// 		.then((res) => {
+// 			console.log(res.data.image_id);
+// 			console.log(res.data.permalink_url);
+// 		})
+// 		.catch((err) => {
+// 			console.error(err);
+// 		});
+// 	});
+// });
 
 //=========================================================
 // 起こしてくれるよ
