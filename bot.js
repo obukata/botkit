@@ -17,8 +17,10 @@ var Botkit = require('botkit');
 var os = require('os');
 var CronJob = require('cron').CronJob;
 const http = require('http');
+const https = require('https');
 const moment = require('moment-timezone');
 const navigator = require('navigator');
+const url = require('url');
 
 var controller = Botkit.slackbot({
 	debug: true,
@@ -189,6 +191,7 @@ controller.hears(["牛久(.*)天気"],["direct_message","direct_mention","mentio
 
 function replaceWeather(target) {
 	const replaced = target
+	.replace(/Clear/, "快晴")
 	.replace(/clear sky/, "快晴")
 	.replace(/few clouds/, "晴れ")
 	.replace(/scattered clouds/, "曇り")
@@ -250,7 +253,44 @@ controller.hears(['付き合って'], 'direct_message,direct_mention,mention,amb
 
 
 //=========================================================
-// 質問形式の会話
+// リュウさんpedia
+//=========================================================
+// var WIKIPEDIA_URL = 'https://ja.wikipedia.org/wiki/';
+
+// controller.hears(['(.*)って何'], 'direct_message,direct_mention,mention,ambient', function (bot, message) {
+// 	var word = message.match[1];
+// 	https.get(url.parse('https://ja.wikipedia.org/w/api.php?format=json&action=query&prop=revisions&rvprop=content&titles=' + word ), (response) => {
+// 		let body = '';
+// 		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+// 		response.on('end', () => {
+// 			let current = JSON.parse(body);
+// 			console.log(pageid)
+// 			bot.say({
+// 				channel: 'dev_botkit',
+// 				text: word + '？\n知らん'
+// 			});
+// 		});
+// 	});
+// });
+
+			// 	response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+			// response.on('end', () => {
+			// 	let current = JSON.parse(body);
+			// 	if(current.list[1].weather[0].main == "Rain") {
+			// 		let text =
+			// 		'明日の大阪市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
+			// 		`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+			// 		'```' +
+			// 		'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + '℃\n' +
+			// 		'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + '℃\n' +
+			// 		'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + '℃\n' +
+			// 		'湿度：' + current.list[1].humidity + '%\n' +
+			// 		'```';
+
+
+
+//=========================================================
+// リュウさん家計簿
 //=========================================================
 
 controller.hears(['ラーメン'], 'direct_message,direct_mention,mention,ambient', function (bot, message) {
