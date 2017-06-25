@@ -30,6 +30,18 @@ var controller = Botkit.slackbot({
 });
 
 //=========================================================
+// 勝率チェッカー
+//=========================================================
+
+controller.hears(["(.*)戦(.*)勝"],["direct_message","direct_mention","mention","ambient"],function(bot,message) {
+	var word1 = message.match[1];
+	var word2 = message.match[2];
+	var result = word1 / word2 * 100;
+	var text = '勝率は' + result + '%だな。';
+	bot.replyWithTyping(message, text);
+});
+
+//=========================================================
 // スクリーンショット
 //=========================================================
 
