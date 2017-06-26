@@ -1,1 +1,1 @@
-worker: token=xoxb-192437903447-ZWHCtq0EtYZYDkdYQOmvkO4a node bot.js
+worker: token=xoxb-192437903447-sIih3WgqzBOlH11zcfGBxb6q node bot.js
