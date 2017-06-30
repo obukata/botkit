@@ -21,9 +21,9 @@ const https = require('https');
 const moment = require('moment-timezone');
 const navigator = require('navigator');
 const url = require('url');
-const webshot = require('webshot');
-var im = require('imagemagick');
-const Gyazo = require('gyazo');
+// const webshot = require('webshot');
+// var im = require('imagemagick');
+// const Gyazo = require('gyazo');
 
 var controller = Botkit.slackbot({
 	debug: true,

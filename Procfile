@@ -1,1 +1,1 @@
-worker: token=xoxp-191817434535-191799039878-201036252883-2c7289bbc76aaffd0f845f9b0e8b825e node bot.js
+worker: token=xoxb-192437903447-dqMYzNO3e69OoZiwvUFFdba6 node bot.js
