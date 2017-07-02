@@ -33,13 +33,13 @@ var controller = Botkit.slackbot({
 // 勝率チェッカー
 //=========================================================
 
-controller.hears(["(.*)戦(.*)勝"],["direct_message","direct_mention","mention","ambient"],function(bot,message) {
-	var word1 = message.match[1];
-	var word2 = message.match[2];
-	var result = word1 / word2 * 100;
-	var text = '勝率は' + result + '%だな。';
-	bot.replyWithTyping(message, text);
-});
+// controller.hears(["(.*)戦(.*)勝"],["direct_message","direct_mention","mention","ambient"],function(bot,message) {
+// 	var word1 = message.match[1];
+// 	var word2 = message.match[2];
+// 	var result = word1 / word2 * 100;
+// 	var text = '勝率は' + result + '%だな。';
+// 	bot.replyWithTyping(message, text);
+// });
 
 //=========================================================
 // スクリーンショット
@@ -127,66 +127,66 @@ var bot = controller.spawn({
 //=========================================================
 
 // 大阪
-new CronJob({
-	cronTime: '00 00 18 * * *',
-	onTick: function() {
-		http.get("http://api.openweathermap.org/data/2.5/forecast/daily?id=1853909&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
-			let body = '';
-			response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
-			response.on('end', () => {
-				let current = JSON.parse(body);
-				if(current.list[1].weather[0].main == "Rain") {
-					let text =
-					'明日の大阪市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
-					`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
-					'```' +
-					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + '℃\n' +
-					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + '℃\n' +
-					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + '℃\n' +
-					'湿度：' + current.list[1].humidity + '%\n' +
-					'```';
-					bot.say({
-						channel: 'talk',
-						text: text
-					});
-				}
-			});
-		});
-	},
-	start: true,
-	timeZone: 'Asia/Tokyo'
-});
+// new CronJob({
+// 	cronTime: '00 00 18 * * *',
+// 	onTick: function() {
+// 		http.get("http://api.openweathermap.org/data/2.5/forecast/daily?id=1853909&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+// 			let body = '';
+// 			response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+// 			response.on('end', () => {
+// 				let current = JSON.parse(body);
+// 				if(current.list[1].weather[0].main == "Rain") {
+// 					let text =
+// 					'明日の大阪市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
+// 					`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+// 					'```' +
+// 					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + '℃\n' +
+// 					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + '℃\n' +
+// 					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + '℃\n' +
+// 					'湿度：' + current.list[1].humidity + '%\n' +
+// 					'```';
+// 					bot.say({
+// 						channel: 'talk',
+// 						text: text
+// 					});
+// 				}
+// 			});
+// 		});
+// 	},
+// 	start: true,
+// 	timeZone: 'Asia/Tokyo'
+// });
 
 // 牛久
-new CronJob({
-	cronTime: '00 00 20 * * *',
-	onTick: function() {
-		http.get("http://api.openweathermap.org/data/2.5/forecast/daily?id=2110629&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
-			let body = '';
-			response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
-			response.on('end', () => {
-				let current = JSON.parse(body);
-				if(current.list[1].weather[0].main == "Rain") {
-					let text =
-					'明日の牛久市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
-					`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
-					'```' +
-					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + '℃\n' +
-					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + '℃\n' +
-					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + '℃\n' +
-					'湿度：' + current.list[1].humidity + '%\n' +
-					'```';
-					bot.say({
-						channel: 'talk',
-						text: text
-					});
-				}
-			});
-		});
-	},
-	start: true,
-	timeZone: 'Asia/Tokyo'
-});
+// new CronJob({
+// 	cronTime: '00 00 20 * * *',
+// 	onTick: function() {
+// 		http.get("http://api.openweathermap.org/data/2.5/forecast/daily?id=2110629&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+// 			let body = '';
+// 			response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+// 			response.on('end', () => {
+// 				let current = JSON.parse(body);
+// 				if(current.list[1].weather[0].main == "Rain") {
+// 					let text =
+// 					'明日の牛久市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
+// 					`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+// 					'```' +
+// 					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + '℃\n' +
+// 					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + '℃\n' +
+// 					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + '℃\n' +
+// 					'湿度：' + current.list[1].humidity + '%\n' +
+// 					'```';
+// 					bot.say({
+// 						channel: 'talk',
+// 						text: text
+// 					});
+// 				}
+// 			});
+// 		});
+// 	},
+// 	start: true,
+// 	timeZone: 'Asia/Tokyo'
+// });
 
 // 大阪
 controller.hears(["大阪(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
@@ -252,21 +252,6 @@ function replaceWeather(target) {
 // つーかー的なやつだよ
 //=========================================================
 
-controller.hears(["波動拳"],["direct_message","direct_mention","mention"],function(bot,message) {
-  bot.replyWithTyping(message, '昇竜拳！');
-});
-
-controller.hears(["昇竜拳"],["direct_message","direct_mention","mention"],function(bot,message) {
-  bot.replyWithTyping(message, '竜巻旋風脚！');
-});
-
-controller.hears(["アレックス フレーム表"],["direct_message","direct_mention","mention"],function(bot,message) {
-  bot.replyWithTyping(message, 'https://docs.google.com/spreadsheets/d/1e8Ott5IfoyXaOcaGQfEW4gxbylA89mF9SB2An2M3gFY/edit#gid=1371017080');
-});
-
-controller.hears(['付き合って'], 'direct_message,direct_mention,mention,ambient',function(bot,message) {
-  bot.replyWithTyping(message, 'お前の楽しみと俺の楽しみは違うようだ。悪いが付き合ってはやれない。');
-});
 
 //=========================================================
 // 基本的な受け答え
@@ -334,32 +319,32 @@ controller.hears(['付き合って'], 'direct_message,direct_mention,mention,amb
 // リュウさん家計簿
 //=========================================================
 
-controller.hears(['ラーメン'], 'direct_message,direct_mention,mention,ambient', function (bot, message) {
-	// 会話を開始します。
-	bot.startConversation(message, function (err, convo) {
-		// convo.ask() で質問をします。
-		convo.ask('もしかして…食べたのか？', [{
-			pattern: '食べた',
-			callback: function (response, convo) {
-				convo.say('そうか');
-				// ▼ マッチした時の処理 ▼
-				// convo.ask('いくらしたんだ', [{
-				// 	var value_ramen = message.match[1];
-				// 	console.log(value_ramen);
-				// ]);
-				convo.next(); // convo.next()で、会話を次に進めます。通常は、会話が終了します。
-			}
-		},
-		{
-			default: true,
-			callback: function (response, convo) {
-				// ▼ どのパターンにもマッチしない時の処理 ▼
-				convo.say('なら、いい。');
-				convo.next(); // 会話を次に進めます。この場合、最初の質問にも戻ります。
-			}
-		}]);
-	})
-});
+// controller.hears(['ラーメン'], 'direct_message,direct_mention,mention,ambient', function (bot, message) {
+// 	// 会話を開始します。
+// 	bot.startConversation(message, function (err, convo) {
+// 		// convo.ask() で質問をします。
+// 		convo.ask('もしかして…食べたのか？', [{
+// 			pattern: '食べた',
+// 			callback: function (response, convo) {
+// 				convo.say('そうか');
+// 				// ▼ マッチした時の処理 ▼
+// 				// convo.ask('いくらしたんだ', [{
+// 				// 	var value_ramen = message.match[1];
+// 				// 	console.log(value_ramen);
+// 				// ]);
+// 				convo.next(); // convo.next()で、会話を次に進めます。通常は、会話が終了します。
+// 			}
+// 		},
+// 		{
+// 			default: true,
+// 			callback: function (response, convo) {
+// 				// ▼ どのパターンにもマッチしない時の処理 ▼
+// 				convo.say('なら、いい。');
+// 				convo.next(); // 会話を次に進めます。この場合、最初の質問にも戻ります。
+// 			}
+// 		}]);
+// 	})
+// });
 
 
 
