@@ -124,7 +124,11 @@ var bot = controller.spawn({
 
 //=========================================================
 // 天気を教えてくれるよ
+// 課題：openweatherでは精度が良くないです。
+// iOSと同じweather.comとか使うといい感じなのかもねー。
 //=========================================================
+
+// 明日が雨なら教えてくれる機能
 
 // 大阪
 // new CronJob({
@@ -137,19 +141,19 @@ var bot = controller.spawn({
 // 				let current = JSON.parse(body);
 // 				if(current.list[1].weather[0].main == "Rain") {
 // 					let text =
-// 					'明日の大阪市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
-// 					`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
-// 					'```' +
-// 					'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + '℃\n' +
-// 					'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + '℃\n' +
-// 					'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + '℃\n' +
-// 					'湿度：' + current.list[1].humidity + '%\n' +
-// 					'```';
-// 					bot.say({
-// 						channel: 'talk',
-// 						text: text
-// 					});
-// 				}
+				// 	'明日の大阪市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
+				// 	`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+				// 	'```' +
+				// 	'平均気温：' + Math.round(current.list[1].temp.day - 273.15) + '℃\n' +
+				// 	'最高気温：' + Math.round(current.list[1].temp.max - 273.15) + '℃\n' +
+				// 	'最低気温：' + Math.round(current.list[1].temp.min - 273.15) + '℃\n' +
+				// 	'湿度：' + current.list[1].humidity + '%\n' +
+				// 	'```';
+				// 	bot.say({
+				// 		channel: 'talk',
+				// 		text: text
+				// 	});
+				// }
 // 			});
 // 		});
 // 	},
@@ -187,6 +191,53 @@ var bot = controller.spawn({
 // 	start: true,
 // 	timeZone: 'Asia/Tokyo'
 // });
+
+
+// 明日の天気
+
+// 大阪
+controller.hears(["明日(.*)大阪(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
+	http.get("http://api.openweathermap.org/data/2.5/forecast?id=1853909&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+		let body = '';
+		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+		response.on('end', () => {
+			let current = JSON.parse(body);
+			let text =
+			'明日の大阪市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
+			`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+			'```' +
+			'平均気温：' + Math.round(current.list[1].main.temp - 273.15) + '℃\n' +
+			'最高気温：' + Math.round(current.list[1].main.temp_max - 273.15) + '℃\n' +
+			'最低気温：' + Math.round(current.list[1].main.temp_min - 273.15) + '℃\n' +
+			'湿度：' + current.list[1].main.humidity + '%\n' +
+			'```';
+			bot.replyWithTyping(message, text);
+		});
+	});
+});
+
+// 牛久
+controller.hears(["明日(.*)牛久(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
+	http.get("http://api.openweathermap.org/data/2.5/forecast?id=2110629&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+		let body = '';
+		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+		response.on('end', () => {
+			let current = JSON.parse(body);
+			let text =
+			'明日の牛久市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
+			`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+			'```' +
+			'平均気温：' + Math.round(current.list[1].main.temp - 273.15) + '℃\n' +
+			'最高気温：' + Math.round(current.list[1].main.temp_max - 273.15) + '℃\n' +
+			'最低気温：' + Math.round(current.list[1].main.temp_min - 273.15) + '℃\n' +
+			'湿度：' + current.list[1].main.humidity + '%\n' +
+			'```';
+			bot.replyWithTyping(message, text);
+		});
+	});
+});
+
+//今日の天気
 
 // 大阪
 controller.hears(["大阪(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
@@ -249,7 +300,7 @@ function replaceWeather(target) {
 
 
 //=========================================================
-// つーかー的なやつだよ
+// おみくじチャンス
 //=========================================================
 
 
