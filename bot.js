@@ -21,9 +21,9 @@ const https = require('https');
 const moment = require('moment-timezone');
 const navigator = require('navigator');
 const url = require('url');
-const webshot = require('webshot');
-var im = require('imagemagick');
-const Gyazo = require('gyazo');
+// const webshot = require('webshot');
+// var im = require('imagemagick');
+// const Gyazo = require('gyazo');
 
 var controller = Botkit.slackbot({
 	debug: true,
@@ -157,7 +157,11 @@ var bot = controller.spawn({
 // 	timeZone: 'Asia/Tokyo'
 // });
 
+<<<<<<< HEAD
 // 牛久
+=======
+// // 牛久
+>>>>>>> 42e523fce896eedfa1f7fea683e0b6b7986abc83
 // new CronJob({
 // 	cronTime: '00 00 20 * * *',
 // 	onTick: function() {
