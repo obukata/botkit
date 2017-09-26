@@ -29,6 +29,27 @@ var controller = Botkit.slackbot({
 	debug: true,
 });
 
+
+//=========================================================
+// A3RT Talk API
+//=========================================================
+
+controller.on("direct_message","direct_mention","mention", (bot, message) => {
+	request({
+		url: 'https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk',
+		method: 'POST',
+		form: { apikey: process.env.a3rt_talk_apikey, query: message.text },
+		json:  true
+	}, (err, response, body) => {
+		if (body.status == 0) {
+			bot.reply(message, `${body.results[0].reply} (${Math.ceil(body.results[0].perplexity * 100) / 100})`);
+		} else {
+			bot.reply(message, `エラーたよ:fearful: [${body.status} ${body.message}]`);
+		}
+	});
+});
+
+
 //=========================================================
 // 勝率チェッカー
 //=========================================================
@@ -71,25 +92,25 @@ var controller = Botkit.slackbot({
 // 起こしてくれるよ
 //=========================================================
 
-var bot = controller.spawn({
-	token: process.env.token
-}).startRTM(function(err, bot, payload) {
-	// 初期処理
-	if(err) {
-		throw new Error('Could not connect to Slack');
-	}
-	new CronJob({
-		cronTime: '00 30 06 * * 1-5',
-		onTick: function() {
-			bot.say({
-				channel: 'talk',
-				text: 'おい！起きろ！\n…元気がないようだな\n納豆はどうだ？健康にいいぞ'
-			});
-		},
-		start: true,
-		timeZone: 'Asia/Tokyo'
-	});
-});
+// var bot = controller.spawn({
+// 	token: process.env.token
+// }).startRTM(function(err, bot, payload) {
+// 	// 初期処理
+// 	if(err) {
+// 		throw new Error('Could not connect to Slack');
+// 	}
+// 	new CronJob({
+// 		cronTime: '00 30 06 * * 1-5',
+// 		onTick: function() {
+// 			bot.say({
+// 				channel: 'talk',
+// 				text: 'おい！起きろ！\n…元気がないようだな\n納豆はどうだ？健康にいいぞ'
+// 			});
+// 		},
+// 		start: true,
+// 		timeZone: 'Asia/Tokyo'
+// 	});
+// });
 
 //=========================================================
 // 地図系のなんとか
@@ -193,110 +214,110 @@ var bot = controller.spawn({
 // });
 
 
-// 明日の天気
+// // 明日の天気
 
-// 大阪
-controller.hears(["明日(.*)大阪(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
-	http.get("http://api.openweathermap.org/data/2.5/forecast?id=1853909&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
-		let body = '';
-		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
-		response.on('end', () => {
-			let current = JSON.parse(body);
-			let text =
-			'明日の大阪市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
-			`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
-			'```' +
-			'平均気温：' + Math.round(current.list[1].main.temp - 273.15) + '℃\n' +
-			'最高気温：' + Math.round(current.list[1].main.temp_max - 273.15) + '℃\n' +
-			'最低気温：' + Math.round(current.list[1].main.temp_min - 273.15) + '℃\n' +
-			'湿度：' + current.list[1].main.humidity + '%\n' +
-			'```';
-			bot.replyWithTyping(message, text);
-		});
-	});
-});
+// // 大阪
+// controller.hears(["明日(.*)大阪(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
+// 	http.get("http://api.openweathermap.org/data/2.5/forecast?id=1853909&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+// 		let body = '';
+// 		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+// 		response.on('end', () => {
+// 			let current = JSON.parse(body);
+// 			let text =
+// 			'明日の大阪市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
+// 			`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+// 			'```' +
+// 			'平均気温：' + Math.round(current.list[1].main.temp - 273.15) + '℃\n' +
+// 			'最高気温：' + Math.round(current.list[1].main.temp_max - 273.15) + '℃\n' +
+// 			'最低気温：' + Math.round(current.list[1].main.temp_min - 273.15) + '℃\n' +
+// 			'湿度：' + current.list[1].main.humidity + '%\n' +
+// 			'```';
+// 			bot.replyWithTyping(message, text);
+// 		});
+// 	});
+// });
 
-// 牛久
-controller.hears(["明日(.*)牛久(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
-	http.get("http://api.openweathermap.org/data/2.5/forecast?id=2110629&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
-		let body = '';
-		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
-		response.on('end', () => {
-			let current = JSON.parse(body);
-			let text =
-			'明日の牛久市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
-			`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
-			'```' +
-			'平均気温：' + Math.round(current.list[1].main.temp - 273.15) + '℃\n' +
-			'最高気温：' + Math.round(current.list[1].main.temp_max - 273.15) + '℃\n' +
-			'最低気温：' + Math.round(current.list[1].main.temp_min - 273.15) + '℃\n' +
-			'湿度：' + current.list[1].main.humidity + '%\n' +
-			'```';
-			bot.replyWithTyping(message, text);
-		});
-	});
-});
+// // 牛久
+// controller.hears(["明日(.*)牛久(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
+// 	http.get("http://api.openweathermap.org/data/2.5/forecast?id=2110629&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+// 		let body = '';
+// 		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+// 		response.on('end', () => {
+// 			let current = JSON.parse(body);
+// 			let text =
+// 			'明日の牛久市は、' + replaceWeather(current.list[1].weather[0].main) + 'だ。\n' +
+// 			`<http://openweathermap.org/img/w/${current.list[1].weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+// 			'```' +
+// 			'平均気温：' + Math.round(current.list[1].main.temp - 273.15) + '℃\n' +
+// 			'最高気温：' + Math.round(current.list[1].main.temp_max - 273.15) + '℃\n' +
+// 			'最低気温：' + Math.round(current.list[1].main.temp_min - 273.15) + '℃\n' +
+// 			'湿度：' + current.list[1].main.humidity + '%\n' +
+// 			'```';
+// 			bot.replyWithTyping(message, text);
+// 		});
+// 	});
+// });
 
-//今日の天気
+// //今日の天気
 
-// 大阪
-controller.hears(["大阪(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
-	http.get("http://api.openweathermap.org/data/2.5/weather?id=1853909&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
-		let body = '';
-		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
-		response.on('end', () => {
-			let current = JSON.parse(body);
-			let text =
-			`今の大阪市は` + replaceWeather(current.weather[0].main) + `だ。` +
-			`<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
-			'```' +
-			'平均気温：' + Math.round(current.main.temp - 273.15) + '℃\n' +
-			'最高気温：' + Math.round(current.main.temp_max - 273.15) + '℃\n' +
-			'最低気温：' + Math.round(current.main.temp_min - 273.15) + '℃\n' +
-			'湿度：' + current.main.humidity + '%\n' +
-			'```';
-			bot.replyWithTyping(message, text);
-		});
-	});
-});
+// // 大阪
+// controller.hears(["大阪(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
+// 	http.get("http://api.openweathermap.org/data/2.5/weather?id=1853909&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+// 		let body = '';
+// 		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+// 		response.on('end', () => {
+// 			let current = JSON.parse(body);
+// 			let text =
+// 			`今の大阪市は` + replaceWeather(current.weather[0].main) + `だ。` +
+// 			`<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+// 			'```' +
+// 			'平均気温：' + Math.round(current.main.temp - 273.15) + '℃\n' +
+// 			'最高気温：' + Math.round(current.main.temp_max - 273.15) + '℃\n' +
+// 			'最低気温：' + Math.round(current.main.temp_min - 273.15) + '℃\n' +
+// 			'湿度：' + current.main.humidity + '%\n' +
+// 			'```';
+// 			bot.replyWithTyping(message, text);
+// 		});
+// 	});
+// });
 
-// 牛久
-controller.hears(["牛久(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
-	http.get("http://api.openweathermap.org/data/2.5/weather?id=2110629&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
-		let body = '';
-		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
-		response.on('end', () => {
-			let current = JSON.parse(body);
-			let text =
-			`今の牛久市は` + replaceWeather(current.weather[0].main) + `だ。` +
-			`<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
-			'```' +
-			'平均気温：' + Math.round(current.main.temp - 273.15) + '℃\n' +
-			'最高気温：' + Math.round(current.main.temp_max - 273.15) + '℃\n' +
-			'最低気温：' + Math.round(current.main.temp_min - 273.15) + '℃\n' +
-			'湿度：' + current.main.humidity + '%\n' +
-			'```';
-			bot.replyWithTyping(message, text);
-		});
-	});
-});
+// // 牛久
+// controller.hears(["牛久(.*)天気"],["direct_message","direct_mention","mention"],function(bot,message) {
+// 	http.get("http://api.openweathermap.org/data/2.5/weather?id=2110629&appid=addd6c5c7f4fcbfcefb9693c77b10eb6", (response) => {
+// 		let body = '';
+// 		response.setEncoding('utf8').on('data', (chunk) => {  body += chunk;  });
+// 		response.on('end', () => {
+// 			let current = JSON.parse(body);
+// 			let text =
+// 			`今の牛久市は` + replaceWeather(current.weather[0].main) + `だ。` +
+// 			`<http://openweathermap.org/img/w/${current.weather[0].icon.replace('n', 'd')}.png?${moment().unix()}| > ` +
+// 			'```' +
+// 			'平均気温：' + Math.round(current.main.temp - 273.15) + '℃\n' +
+// 			'最高気温：' + Math.round(current.main.temp_max - 273.15) + '℃\n' +
+// 			'最低気温：' + Math.round(current.main.temp_min - 273.15) + '℃\n' +
+// 			'湿度：' + current.main.humidity + '%\n' +
+// 			'```';
+// 			bot.replyWithTyping(message, text);
+// 		});
+// 	});
+// });
 
-function replaceWeather(target) {
-	const replaced = target
-	.replace(/Clear/, "快晴")
-	.replace(/clear sky/, "快晴")
-	.replace(/few clouds/, "晴れ")
-	.replace(/scattered clouds/, "曇り")
-	.replace(/Clouds/, "曇り")
-	.replace(/broken clouds/, "曇り")
-	.replace(/shower rain/, "小雨")
-	.replace(/Rain/, "雨")
-	.replace(/thunderstorm/, "雷雨")
-	.replace(/snow/, "雪")
-	.replace(/mist/, "霧")
-	console.log(replaced);
-	return replaced;
-}
+// function replaceWeather(target) {
+// 	const replaced = target
+// 	.replace(/Clear/, "快晴")
+// 	.replace(/clear sky/, "快晴")
+// 	.replace(/few clouds/, "晴れ")
+// 	.replace(/scattered clouds/, "曇り")
+// 	.replace(/Clouds/, "曇り")
+// 	.replace(/broken clouds/, "曇り")
+// 	.replace(/shower rain/, "小雨")
+// 	.replace(/Rain/, "雨")
+// 	.replace(/thunderstorm/, "雷雨")
+// 	.replace(/snow/, "雪")
+// 	.replace(/mist/, "霧")
+// 	console.log(replaced);
+// 	return replaced;
+// }
 
 
 //=========================================================
