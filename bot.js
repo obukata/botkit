@@ -1,5 +1,6 @@
 const Botkit = require('botkit');
-const request = require('request');
+var request = require('request');
+const http = require('http');
 
 if (!process.env.token) {
 	console.log('Error: Specify token in environment');
@@ -7,7 +8,7 @@ if (!process.env.token) {
 }
 
 const controller = Botkit.slackbot({
-	debug: true
+	debug: false
 });
 
 controller.spawn({
@@ -19,22 +20,33 @@ controller.spawn({
 });
 
 
-//=========================================================
-// A3RT Talk API
-//=========================================================
+var context = '';
+var mode = 'dialog';
+var place = '大阪';
+var t = '20';
 
-controller.on(['direct_message','direct_mention','mention'], (bot, message) => {
-	request({
-		url: 'https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk',
-		method: 'POST',
-		form: { apikey: process.env.a3rt_talk_apikey, query: message.text },
-		json:  true
-	}, (err, response, body) => {
-		if (body.status == 0) {
-			bot.reply(message, `${body.results[0].reply}`);
-			// bot.reply(message, `${body.results[0].reply} (${Math.ceil(body.results[0].perplexity * 100) / 100})`);
-		} else {
-			bot.reply(message, `エラーたよ:fearful: [${body.status} ${body.message}]`);
-		}
-	});
+controller.hears('', ['direct_message,direct_mention,mention'], function(bot, message) {
+		console.log(message);
+    var options = {
+        url: 'https://api.apigw.smt.docomo.ne.jp/dialogue/v1/dialogue?APIKEY=434c77655678346836627944586d71637846667765786150374441336a534c77414449594f476169425544',
+        json: {
+            utt: message.text,
+            place: place,
+            t:t,
+
+            // 以下2行はしりとり以外の会話はコメントアウトいいかも
+            // 会話を継続しているかの情報
+            context: context,
+            mode: mode
+        }
+    }
+
+    //リクエスト送信
+    request.post(options, function (error, response, body) {
+        context = body.context;
+        mode = body.mode;
+
+        bot.reply(message, body.utt);
+    })
+
 });
